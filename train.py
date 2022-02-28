@@ -11,7 +11,7 @@ import matplotlib.pyplot as plt
 import numpy as np
 import tqdm
 # from source.datagenerator import DataGenerator
-from source.complex_datagenerator import DataGenerator
+from source.datageneratorMK2 import DataGenerator
 # from source.dataloader import DataLoader
 from config.config import config_dict, models_dict
 from config.features import make_feature_handler

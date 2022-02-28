@@ -2,7 +2,7 @@
 Configurations and selections
 _______________________________________________________________________________________________________________________
 The file that contains all the configurations and selection criteria
-TODO: This should really be done using YAML - user shouldn't need to edit .py files unnecessarily
+TODO: Make this better
 """
 
 import yaml
@@ -11,12 +11,11 @@ import model.models
 # Directory pointing to the NTuples to train/test on
 ntuple_dir = "/home/bewilson/NTuples"
 
-# Bowen's DSNN config dictionary
-
 features_dict = None
 with open("config/features.yaml", 'r') as stream:
 	features_dict = yaml.load(stream, Loader=yaml.FullLoader)
 
+# Bowen's DSNN config dictionary
 config_dict = {"shapes":
 				   {"TauTrack": (len(features_dict["TauTracks"]),) + (3,),
 					"NeutralPFO": (len(features_dict["NeutralPFO"]),) + (6,),

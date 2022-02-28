@@ -3,6 +3,7 @@ import pandas as pd
 import yaml
 
 def make_feature_handler():
+    # Function to read yaml and csv files to initialize FeatureHandler
 
     stats_df = pd.read_csv("config/stats_df.csv", index_col=0)
 
