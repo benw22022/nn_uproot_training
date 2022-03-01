@@ -52,8 +52,10 @@ class DataGenerator:
         # Process one batch of data yielded by uproot.iterate into input features, labels and weights
         # Network has 5 inputs tracks, neutral PFOs, shot PFOs, conversion tracks and high-level jet info
 
-        tracks = ak.unzip(batch[self.features["TauTracks"]])
-        tracks = np.stack([ak.to_numpy(ak.pad_none(arr, 3, clip=True)) for arr in tracks], axis=1).filled(0)  
+        # tracks = ak.unzip(batch[self.features["TauTracks"]])
+        # tracks = np.stack([ak.to_numpy(ak.pad_none(arr, 3, clip=True)) for arr in tracks], axis=1).filled(0)  
+        # https://awkward-array.org/how-to-restructure-pad.html
+        tracks = np.asarray(ak.concatenate(ak.unzip(batch[self.features["TauTracks"]][:, np.newaxis]), axis=1))
 
         neutral_pfo = ak.unzip(batch[self.features["NeutralPFO"]])
         neutral_pfo = np.stack([ak.to_numpy(ak.pad_none(arr, 6, clip=True)) for arr in neutral_pfo], axis=1).filled(0)    

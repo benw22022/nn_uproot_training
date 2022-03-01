@@ -12,10 +12,19 @@ def make_feature_handler():
     with open("config/features.yaml", 'r') as stream:
 
         for key, value in yaml.load(stream, Loader=yaml.FullLoader).items():
-            
+
             if isinstance(value, list):
                 tmp_features = []
                 for item in value:
+                    
+                    # These mini NTuples were made using RDataframe in ROOT
+                    # Due to quirk of ROOT need to replace the "." with "_"
+                    item = item.replace("TauTracks_", "TauTracks.")
+                    item = item.replace("NeutralPFO_", "NeutralPFO.")
+                    item = item.replace("ShotPFO_", "ShotPFO.")
+                    item = item.replace("ConvTrack_", "ConvTrack.")
+                    item = item.replace("TauJets_", "TauJets.")
+
                     mean = stats_df.iloc[list(stats_df.index).index(item)]["Mean"]
                     std = stats_df.iloc[list(stats_df.index).index(item)]["StdDev"]
                     tmp_features.append(fh.Feature(item, mean, std))

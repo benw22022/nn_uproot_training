@@ -9,19 +9,21 @@ import glob
 import tqdm
 from source.datageneratorMK2 import DataGenerator
 from config.features import make_feature_handler
+import sys
 
 
 def grab_files(directory, glob_exprs):
     files = []
     for expr in glob_exprs: 
-        files.append([glob.glob(os.path.join(directory, expr, "*.root"))])
+        files.append([[glob.glob(os.path.join(directory, expr, "*.root"))][0]])
         
     return files
 
 def loop_test():
 
-    files = grab_files("NTuples/", ["*Gammatautau*", "*JZ1*", "*JZ2*", "*JZ3*", "*JZ4*", "*JZ5*", "*JZ6*", "*JZ7*", "*JZ8*"])
-    
+    files = grab_files("../NTuples/", ["*Gammatautau*", "*JZ1*", "*JZ2*", "*JZ3*", "*JZ4*", "*JZ5*", "*JZ6*", "*JZ7*", "*JZ8*"])
+    print(files)
+    sys.exit()
     files_dict = {"Gammatautau": files[0], 
                   "JZ1": files[1],
                   "JZ2": files[2],
