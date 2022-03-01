@@ -22,18 +22,25 @@ def grab_files(directory, glob_exprs):
 def loop_test():
 
     files = grab_files("../NTuples/", ["*Gammatautau*", "*JZ1*", "*JZ2*", "*JZ3*", "*JZ4*", "*JZ5*", "*JZ6*", "*JZ7*", "*JZ8*"])
-    print(files)
-    sys.exit()
-    files_dict = {"Gammatautau": files[0], 
-                  "JZ1": files[1],
-                  "JZ2": files[2],
-                  "JZ3": files[3],
-                  "JZ4": files[4],
-                  "JZ5": files[5],
-                  "JZ6": files[6],
-                  "JZ7": files[7],
-                  "JZ8": files[8],
+    
+    files_dict = {"Gammatautau": [files[0][0][0]], 
+                  "JZ1": [files[1][0][0]],
+                  "JZ2": [files[2][0][0]],
+                  "JZ3": [files[3][0][0]],
+                  "JZ4": [files[4][0][0]],
+                  "JZ5": [files[5][0][0]],
+                  "JZ6": [files[6][0][0]],
+                  "JZ7": [files[7][0][0]],
+                  "JZ8": [files[8][0][0]],
                   }
+
+    for key, value in files_dict.items():
+        for f in value:
+            print(f, "\n")
+            os.system(f"cp {f} ../temp_files")
+
+
+    sys.exit()
 
     training_batch_generator = DataGenerator(files_dict, make_feature_handler(), batch_size=100000)
 
