@@ -13,7 +13,7 @@ from config.features import make_feature_handler
 def simulate_training_loop():
 
     # List of files - one of each type
-    files = glob.glob("../test_files/*.root")
+    files = glob.glob("test_files/*.root")
     
     # Note: DataGenerator expects a dict with str: List[str] structure
     files_dict = {"Type1": [files[0]], 
