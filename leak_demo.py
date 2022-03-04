@@ -16,6 +16,7 @@ def simulate_training_loop():
     files = glob.glob("test_files/*.root")
     
     # Note: DataGenerator expects a dict with str: List[str] structure
+    # file type keys are generic - correct names not needed for this test
     files_dict = {"Type1": [files[0]], 
                   "Type2": [files[1]],
                   "Type3": [files[2]],
