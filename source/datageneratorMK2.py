@@ -20,14 +20,13 @@ class DataGenerator:
         self.features = feature_handler
         self.files_dict = files_dict
 
-        # Make some lazy arrays to help work out sizes of each dataset
+        # Make some lazy arrays to help work out number of events in each dataset
         for file_type, file_list in files_dict.items():
             lazy_arrays[file_type] = uproot.lazy(file_list, step_size="50 MB")
 
-        # Work out the step size for each iterator - each full batch should have the same proportion of 
-        # each file type
+        # Work out the step size for each iterator - each full batch should have the same proportion of each file type
         self.nevents = sum([len(arr) for arr in lazy_arrays.values()])
-        print(self.nevents)
+        print(f"Found {self.nevents} events")
 
         for file_type, array in lazy_arrays.items():
             self.batch_sizes[file_type] = ceil(len(array) / self.nevents * batch_size)
@@ -50,7 +49,7 @@ class DataGenerator:
     def process_batch(self, batch: ak.Array, is_fake: bool=False) -> Tuple:
         
         # Process one batch of data yielded by uproot.iterate into input features, labels and weights
-        # Network has 5 inputs tracks, neutral PFOs, shot PFOs, conversion tracks and high-level jet info
+        # Network has 5 inputs: tracks, neutral PFOs, shot PFOs, conversion tracks and high-level jet info
 
         # tracks = ak.unzip(batch[self.features["TauTracks"]])
         # tracks = np.stack([ak.to_numpy(ak.pad_none(arr, 3, clip=True)) for arr in tracks], axis=1).filled(0)  
@@ -114,6 +113,8 @@ class DataGenerator:
                                                     file_handler=uproot.MultithreadedFileSource)
                 print(f"Remade {file_type} iterator")
                 array = next(self.iters[file_type])
+            
+            # Comment all this stuff out for debuging
             # batch.append(self.process_batch(array, is_fake))
 
 
