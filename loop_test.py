@@ -7,7 +7,7 @@ debugging
 import os
 import glob
 import tqdm
-from source.datageneratorMK2 import DataGenerator
+from source.datagenerator import DataGenerator
 from config.features import make_feature_handler
 import sys
 
@@ -34,20 +34,12 @@ def loop_test():
                   "JZ8": [files[8][0][0]],
                   }
 
-    for key, value in files_dict.items():
-        for f in value:
-            print(f, "\n")
-            os.system(f"cp {f} ../temp_files")
-
-
-    sys.exit()
-
     training_batch_generator = DataGenerator(files_dict, make_feature_handler(), batch_size=100000)
 
     while True:
         for i in tqdm.tqdm(range(0, len(training_batch_generator))):
             x = training_batch_generator[i]
-        training_batch_generator.reset()
+        # training_batch_generator.reset()
 
 if __name__ == "__main__":
     

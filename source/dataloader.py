@@ -4,10 +4,13 @@ import numpy as np
 import uproot
 from typing import List, Tuple
 from source.feature_handler import FeatureHandler
-import gc
-from copy import deepcopy
+from math import ceil
 
 class DataLoader:
+
+    # Helper class to manage just one of each file type
+    # This was my original approach - I tried to parallelise the I/O by making DataLoaders run
+    # on seperate python processes in parallel using Ray
 
     def __init__(self, files: List[str], features: FeatureHandler, batch_size: int=1) -> None:
         
@@ -15,20 +18,19 @@ class DataLoader:
         self.features = features
 
         self.batch_size = batch_size
-        self.is_jet = False
+        self.is_fake = False
         if "JZ" in os.path.basename(files[0][0]):
-            self.is_jet = True
-    
-        self.lazy_array = uproot.lazy(self.files, filter_name=self.features.as_list(), step_size="50 MB")
-        # self.lazy_array = np.ones(int(1e6))
+            self.is_fake = True
+
+        # This particular version of this class uses uproot.lazy - can also use uproot.iterate (which was my original approach)
+        # Also the memory leak here is even worse 
+        self.lazy_array = uproot.lazy(self.files, filter_name=self.features.as_list(), step_size="50 MB", file_handler=uproot.MultithreadedFileSource)
 
     def __getitem__(self, idx) -> Tuple:
 
-        # batch = deepcopy(self.lazy_array[idx * self.batch_size: (idx  + 1) * self.batch_size])
-        # batch = self.lazy_array[idx * self.batch_size: (idx  + 1) * self.batch_size]#.copy()
-
-        # return batch, batch, batch
-
+        # I suspect that the leak here might be coming from the line below 
+        # I read you can run into memory issues when using slices / views etc - I tried deepcopying the slice but that was
+        # painfully slow and didn't completely solve the issue
         batch = self.lazy_array[idx * self.batch_size: (idx  + 1) * self.batch_size]
 
         tracks = ak.unzip(batch[self.features["TauTracks"]])
@@ -46,11 +48,11 @@ class DataLoader:
         jets = ak.unzip(batch[self.features["TauJets"]])
         jets = np.stack([ak.to_numpy(arr) for arr in jets], axis=1)     
 
-        if not self.is_jet:
+        if not self.is_fake:
             decay_mode = ak.to_numpy(batch["TauJets.truthDecayMode"])
             labels = np.zeros((len(decay_mode), 6))  
             for i, dm in enumerate(decay_mode):
-                labels[i][dm] += 1
+                labels[i][dm + 1] += 1
         else:
             labels = np.zeros((len(jets), 6))
             labels[:, 0] = 1
@@ -60,4 +62,4 @@ class DataLoader:
         return ((tracks, neutral_pfo, shot_pfo, conv_tracks, jets), labels, weights)
 
     def __len__(self) -> int:
-        return len(self.lazy_array) // self.batch_size
+        return ceil(len(self.lazy_array) / self.batch_size)

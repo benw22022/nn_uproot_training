@@ -1,20 +1,18 @@
 import numpy as np
-# import tensorflow as tf
-from typing import List
+from typing import List, Dict
 from source.feature_handler import FeatureHandler
 from source.dataloader import DataLoader
-import gc
-from copy import deepcopy
+from math import ceil
 
 # class DataGenerator(tf.keras.utils.Sequence):
 class DataGenerator:
 
-    def __init__(self, files: List[List[str]], feature_handler: FeatureHandler, batch_size: int) -> None:
+    def __init__(self, files_dict: Dict[str, List[str]], feature_handler: FeatureHandler, batch_size: int) -> None:
         
         self.dataloaders = []
         self.batch_size = batch_size
 
-        for file_list in files:
+        for file_list in files_dict.values():
             self.dataloaders.append(DataLoader(file_list, feature_handler))
 
         dataloader_lengths = [len(dl) for dl in self.dataloaders]
@@ -25,19 +23,15 @@ class DataGenerator:
 
     def __getitem__(self, idx):
         batch = [dl[idx] for dl in self.dataloaders]
-        try:
-            # return batch
-            x_batch = []
-            for i in range(0, len(batch[0])):
-                x_batch.append(np.concatenate([result[0][i] for result in batch]))
+        x_batch = []
+        for i in range(0, len(batch[0])):
+            x_batch.append(np.concatenate([result[0][i] for result in batch]))
 
-            y_batch = np.concatenate([result[1] for result in batch])
-            weight_batch = np.concatenate([result[2] for result in batch])
+        y_batch = np.concatenate([result[1] for result in batch])
+        weight_batch = np.concatenate([result[2] for result in batch])
 
-            return x_batch, y_batch, weight_batch
-        finally:
-            gc.collect()
+        return x_batch, y_batch, weight_batch
     
 
     def __len__(self):
-        return self.nevents // self.batch_size
+        return ceil(self.nevents / self.batch_size)

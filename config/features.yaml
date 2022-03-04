@@ -48,16 +48,16 @@ ShotPFO:
   - "ShotPFO.jetpt"
 
 ConvTrack:
-  - "ConvTracks.dphiECal"
-  - "ConvTracks.dphi"
-  - "ConvTracks.detaECal"
-  - "ConvTracks.deta"
-  - "ConvTracks.pt"
-  - "ConvTracks.jetpt"
-  - "ConvTracks.d0TJVA"
-  - "ConvTracks.d0SigTJVA"
-  - "ConvTracks.z0sinthetaTJVA"
-  - "ConvTracks.z0sinthetaSigTJVA"
+  - "ConvTrack.dphiECal"
+  - "ConvTrack.dphi"
+  - "ConvTrack.detaECal"
+  - "ConvTrack.deta"
+  - "ConvTrack.pt"
+  - "ConvTrack.jetpt"
+  - "ConvTrack.d0TJVA"
+  - "ConvTrack.d0SigTJVA"
+  - "ConvTrack.z0sinthetaTJVA"
+  - "ConvTrack.z0sinthetaSigTJVA"
 
 TauJets:
   - "TauJets.centFrac"
